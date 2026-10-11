@@ -1,0 +1,677 @@
+@default	ERRNO(ENOSYS)
+# Uncomment to allow x32 binaries
+#@arch	x86_64	x32,x86
+@arch	x86_64
+@arch	aarch64	arm
+@arch	mips64	mips,mips64n32
+@arch	mips64n32	mips,mips64
+@arch	mipsel64	mipsel,mipsel64n32
+@arch	mipsel64n32	mipsel,mipsel64
+@arch	s390x	s390
+@arch	riscv64
+@arch	loongarch64
+_llseek	ALLOW
+_newselect	ALLOW
+# Removed from Linux (5.5)
+#_sysctl	ERRNO(ENOSYS)
+accept	ALLOW
+accept4	ALLOW
+access	ALLOW
+acct	ALLOW	cap:SYS_PACCT
+acct	ERRNO(EPERM)	!cap:SYS_PACCT
+# Same behaviour as keyctl
+add_key	ERRNO(EPERM)
+adjtimex	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#afs_syscall	ERRNO(ENOSYS)
+alarm	ALLOW
+arch_prctl	ALLOW	arch:amd64,x32
+arm_fadvise64_64	ALLOW	arch:arm,arm64
+arm_sync_file_range	ALLOW	arch:arm,arm64
+bdflush	ERRNO(EPERM)
+bind	ALLOW
+bpf	ALLOW	cap:BPF
+bpf	ALLOW	cap:SYS_ADMIN
+bpf	ERRNO(EPERM)	!cap:BPF && !cap:SYS_ADMIN
+# Unimplemented in Linux: always ENOSYS
+#break	ERRNO(ENOSYS)
+breakpoint	ALLOW	arch:arm,arm64
+brk	ALLOW
+# Like cacheflush on arm
+#cachectl	ALLOW	arch:mips,mips64,mips64n32
+cacheflush	ALLOW	arch:arm,arm64
+# blocked in https://github.com/podman-container-tools/container-libs/commit/f9fb2eba22b6600132647971171d23a45c6f62d7
+cachestat	ERRNO(EPERM)
+capget	ALLOW
+capset	ALLOW
+chdir	ALLOW
+chmod	ALLOW
+chown	ALLOW
+chown32	ALLOW
+chroot	ALLOW	cap:SYS_CHROOT
+chroot	ERRNO(EPERM)	!cap:SYS_CHROOT
+clock_adjtime	ALLOW
+clock_adjtime64	ALLOW
+clock_getres	ALLOW
+clock_getres_time64	ALLOW
+clock_gettime	ALLOW
+clock_gettime64	ALLOW
+clock_nanosleep	ALLOW
+clock_nanosleep_time64	ALLOW
+clock_settime	ALLOW	cap:SYS_TIME
+clock_settime	ERRNO(EPERM)	!cap:SYS_TIME
+clock_settime64	ALLOW	cap:SYS_TIME
+clock_settime64	ERRNO(EPERM)	!cap:SYS_TIME
+# Docker is more strict here
+clone	ALLOW	arg0&(CLONE_NEWNS|CLONE_NEWCGROUP|CLONE_NEWUTS|CLONE_NEWIPC|CLONE_NEWUSER|CLONE_NEWPID|CLONE_NEWNET)==0 && !cap:SYS_ADMIN && !arch:s390,s390x
+clone	ALLOW	arg1&(CLONE_NEWNS|CLONE_NEWCGROUP|CLONE_NEWUTS|CLONE_NEWIPC|CLONE_NEWUSER|CLONE_NEWPID|CLONE_NEWNET)==0 && !cap:SYS_ADMIN && arch:s390,s390x
+clone	ALLOW	cap:SYS_ADMIN
+# Docker is more strict here
+clone3	ALLOW	cap:SYS_ADMIN
+close	ALLOW
+close_range	ALLOW
+connect	ALLOW
+copy_file_range	ALLOW
+creat	ALLOW
+# Removed from Linux (2.6)
+#create_module	ERRNO(ENOSYS)
+delete_module	ALLOW	cap:SYS_MODULE
+delete_module	ERRNO(EPERM)	!cap:SYS_MODULE
+dup	ALLOW
+dup2	ALLOW
+dup3	ALLOW
+epoll_create	ALLOW
+epoll_create1	ALLOW
+epoll_ctl	ALLOW
+epoll_ctl_old	ALLOW
+epoll_pwait	ALLOW
+epoll_pwait2	ALLOW
+epoll_wait	ALLOW
+epoll_wait_old	ALLOW
+eventfd	ALLOW
+eventfd2	ALLOW
+execve	ALLOW
+execveat	ALLOW
+exit	ALLOW
+exit_group	ALLOW
+faccessat	ALLOW
+faccessat2	ALLOW
+fadvise64	ALLOW
+fadvise64_64	ALLOW
+fallocate	ALLOW
+# Linux allows fanotify_init without CAP_SYS_ADMIN since 5.13. See https://github.com/moby/profiles/pull/35
+fanotify_init	ALLOW	cap:SYS_ADMIN
+fanotify_mark	ALLOW
+fchdir	ALLOW
+fchmod	ALLOW
+fchmodat	ALLOW
+fchmodat2	ALLOW
+fchown	ALLOW
+fchown32	ALLOW
+fchownat	ALLOW
+fcntl	ALLOW
+fcntl64	ALLOW
+fdatasync	ALLOW
+fgetxattr	ALLOW
+# Missing in Docker and Podman
+#file_getattr	ALLOW
+# Missing in Docker and Podman
+#file_setattr	ALLOW
+finit_module	ALLOW	cap:SYS_MODULE
+finit_module	ERRNO(EPERM)	!cap:SYS_MODULE
+flistxattr	ALLOW
+flock	ALLOW
+fork	ALLOW
+fremovexattr	ALLOW
+# Docker is more strict here
+fsconfig	ALLOW	cap:SYS_ADMIN
+fsetxattr	ALLOW
+# Docker is more strict here
+fsmount	ALLOW	cap:SYS_ADMIN
+# Docker is more strict here
+fsopen	ALLOW	cap:SYS_ADMIN
+# Docker is more strict here
+fspick	ALLOW	cap:SYS_ADMIN
+fstat	ALLOW
+fstat64	ALLOW
+fstatat64	ALLOW
+fstatfs	ALLOW
+fstatfs64	ALLOW
+fsync	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#ftime	ERRNO(ENOSYS)
+ftruncate	ALLOW
+ftruncate64	ALLOW
+futex	ALLOW
+futex_requeue	ALLOW
+futex_time64	ALLOW
+futex_wait	ALLOW
+futex_waitv	ALLOW
+futex_wake	ALLOW
+futimesat	ALLOW
+# Removed from Linux (2.6)
+#get_kernel_syms	ERRNO(ENOSYS)
+# Docker is more strict here
+get_mempolicy	ALLOW	cap:SYS_NICE
+get_robust_list	ALLOW
+get_thread_area	ALLOW
+# Like set_tls
+#get_tls	ALLOW	arch:arm,arm64
+getcpu	ALLOW
+getcwd	ALLOW
+getdents	ALLOW
+getdents64	ALLOW
+getegid	ALLOW
+getegid32	ALLOW
+geteuid	ALLOW
+geteuid32	ALLOW
+getgid	ALLOW
+getgid32	ALLOW
+getgroups	ALLOW
+getgroups32	ALLOW
+getitimer	ALLOW
+getpeername	ALLOW
+getpgid	ALLOW
+getpgrp	ALLOW
+getpid	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#getpmsg	ERRNO(ENOSYS)
+getppid	ALLOW
+getpriority	ALLOW
+getrandom	ALLOW
+getresgid	ALLOW
+getresgid32	ALLOW
+getresuid	ALLOW
+getresuid32	ALLOW
+getrlimit	ALLOW
+getrusage	ALLOW
+getsid	ALLOW
+getsockname	ALLOW
+getsockopt	ALLOW
+gettid	ALLOW
+gettimeofday	ALLOW
+getuid	ALLOW
+getuid32	ALLOW
+getxattr	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/c75c367dcdf9d48dd8a0d1f62d020456e00a4f00
+getxattrat	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#gtty	ERRNO(ENOSYS)
+# Removed from Linux (2.3.13)
+#idle	ERRNO(ENOSYS)
+init_module	ALLOW	cap:SYS_MODULE
+init_module	ERRNO(EPERM)	!cap:SYS_MODULE
+inotify_add_watch	ALLOW
+inotify_init	ALLOW
+inotify_init1	ALLOW
+inotify_rm_watch	ALLOW
+io_cancel	ALLOW
+io_destroy	ALLOW
+io_getevents	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/1dd9ae5100d516e6e059bbed2b8d19b5e4df69f8
+io_pgetevents	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/a50576322f099e0f91ea6b5b114ba05ff6934eae
+io_pgetevents_time64	ALLOW
+io_setup	ALLOW
+io_submit	ALLOW
+# Disable io-uring
+io_uring_enter	ERRNO(EPERM)
+io_uring_register	ERRNO(EPERM)
+io_uring_setup	ERRNO(EPERM)
+ioctl	ALLOW
+ioperm	ALLOW	cap:SYS_RAWIO
+ioperm	ERRNO(EPERM)	!cap:SYS_RAWIO
+iopl	ALLOW	cap:SYS_RAWIO
+iopl	ERRNO(EPERM)	!cap:SYS_RAWIO
+ioprio_get	ALLOW
+ioprio_set	ALLOW
+ipc	ALLOW
+kcmp	ALLOW	cap:SYS_PTRACE
+kcmp	ERRNO(EPERM)	!cap:SYS_PTRACE
+kexec_file_load	ERRNO(EPERM)
+kexec_load	ERRNO(EPERM)
+# Docker: Prevent containers from using the kernel keyring, which is not namespaced.
+keyctl	ERRNO(EPERM)
+kill	ALLOW
+landlock_add_rule	ALLOW
+landlock_create_ruleset	ALLOW
+landlock_restrict_self	ALLOW
+lchown	ALLOW
+lchown32	ALLOW
+lgetxattr	ALLOW
+link	ALLOW
+linkat	ALLOW
+listen	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/4d30d2d2b7dbbca6baaf00cf2e826c6caab0f88b
+listmount	ALLOW
+# Missing in Docker and Podman
+#listns	ALLOW	cap:SYS_ADMIN
+listxattr	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/c75c367dcdf9d48dd8a0d1f62d020456e00a4f00
+listxattrat	ALLOW
+llistxattr	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#lock	ERRNO(ENOSYS)
+lookup_dcookie	ALLOW	cap:SYS_ADMIN
+lookup_dcookie	ERRNO(EPERM)	!cap:SYS_ADMIN
+lremovexattr	ALLOW
+lseek	ALLOW
+lsetxattr	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/5bb2d1ae8ba7639a0dbb0965df8ce337f190251c
+lsm_get_self_attr	ALLOW	cap:SYS_ADMIN
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/5bb2d1ae8ba7639a0dbb0965df8ce337f190251c
+lsm_list_modules	ALLOW	cap:SYS_ADMIN
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/5bb2d1ae8ba7639a0dbb0965df8ce337f190251c
+lsm_set_self_attr	ALLOW	cap:SYS_ADMIN
+lstat	ALLOW
+lstat64	ALLOW
+madvise	ALLOW
+# blocked in https://github.com/podman-container-tools/container-libs/commit/f9fb2eba22b6600132647971171d23a45c6f62d7
+map_shadow_stack	ERRNO(EPERM)
+# Docker is more strict here
+mbind	ALLOW	cap:SYS_NICE
+membarrier	ALLOW
+memfd_create	ALLOW
+memfd_secret	ALLOW
+migrate_pages	ERRNO(EPERM)
+mincore	ALLOW
+mkdir	ALLOW
+mkdirat	ALLOW
+mknod	ALLOW
+mknodat	ALLOW
+mlock	ALLOW
+mlock2	ALLOW
+mlockall	ALLOW
+mmap	ALLOW
+mmap2	ALLOW
+modify_ldt	ALLOW	arch:amd64,x32,x86
+# Docker is more strict here
+mount	ALLOW	cap:SYS_ADMIN
+# Docker is more strict here
+mount_setattr	ALLOW	cap:SYS_ADMIN
+# Docker is more strict here
+move_mount	ALLOW	cap:SYS_ADMIN
+move_pages	ERRNO(EPERM)
+mprotect	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#mpx	ERRNO(ENOSYS)
+mq_getsetattr	ALLOW
+mq_notify	ALLOW
+mq_open	ALLOW
+mq_timedreceive	ALLOW
+mq_timedreceive_time64	ALLOW
+mq_timedsend	ALLOW
+mq_timedsend_time64	ALLOW
+mq_unlink	ALLOW
+mremap	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/4d30d2d2b7dbbca6baaf00cf2e826c6caab0f88b
+mseal	ALLOW
+msgctl	ALLOW
+msgget	ALLOW
+msgrcv	ALLOW
+msgsnd	ALLOW
+msync	ALLOW
+# Unused on powerpc
+#multiplexer	ERRNO(ENOSYS)
+munlock	ALLOW
+munlockall	ALLOW
+munmap	ALLOW
+name_to_handle_at	ALLOW
+nanosleep	ALLOW
+newfstatat	ALLOW
+nfsservctl	ERRNO(EPERM)
+nice	ERRNO(EPERM)
+oldfstat	ERRNO(EPERM)
+oldlstat	ERRNO(EPERM)
+oldolduname	ERRNO(EPERM)
+oldstat	ERRNO(EPERM)
+olduname	ERRNO(EPERM)
+open	ALLOW
+open_by_handle_at	ALLOW	cap:DAC_READ_SEARCH
+open_by_handle_at	ERRNO(EPERM)	!cap:DAC_READ_SEARCH
+# Docker is more strict here
+open_tree	ALLOW	cap:SYS_ADMIN
+# Missing in Docker and Podman
+#open_tree_attr	ALLOW	cap:SYS_ADMIN
+openat	ALLOW
+openat2	ALLOW
+pause	ALLOW
+pciconfig_iobase	ERRNO(EPERM)
+pciconfig_read	ERRNO(EPERM)
+pciconfig_write	ERRNO(EPERM)
+perf_event_open	ALLOW	cap:PERFMON && cap:SYS_ADMIN
+perf_event_open	ALLOW	cap:SYS_ADMIN
+perf_event_open	ERRNO(EPERM)	!cap:PERFMON && !cap:SYS_ADMIN
+personality	ALLOW	arg0==0xffffffff
+personality	ALLOW	arg0==PER_LINUX
+personality	ALLOW	arg0==PER_LINUX32
+personality	ALLOW	arg0==PER_LINUX32|UNAME26
+personality	ALLOW	arg0==UNAME26
+# Docker is more strict here
+pidfd_getfd	ALLOW	cap:SYS_PTRACE
+pidfd_open	ALLOW
+pidfd_send_signal	ALLOW
+pipe	ALLOW
+pipe2	ALLOW
+# Deny pivot_root, should be privileged operation. See https://docs.docker.com/engine/security/seccomp/
+pivot_root	ERRNO(EPERM)
+pkey_alloc	ALLOW
+pkey_free	ALLOW
+pkey_mprotect	ALLOW
+poll	ALLOW
+ppoll	ALLOW
+ppoll_time64	ALLOW
+prctl	ALLOW
+pread64	ALLOW
+preadv	ALLOW
+preadv2	ALLOW
+prlimit64	ALLOW
+process_madvise	ALLOW	cap:SYS_PTRACE
+process_madvise	ERRNO(EPERM)	!cap:SYS_PTRACE
+process_mrelease	ALLOW
+process_vm_readv	ALLOW	cap:SYS_PTRACE
+process_vm_readv	ALLOW	kernel>=4.8
+process_vm_writev	ALLOW	cap:SYS_PTRACE
+process_vm_writev	ALLOW	kernel>=4.8
+# Unimplemented in Linux: always ENOSYS
+#prof	ERRNO(ENOSYS)
+# Unimplemented in Linux: always ENOSYS
+#profil	ERRNO(ENOSYS)
+pselect6	ALLOW
+pselect6_time64	ALLOW
+ptrace	ALLOW	cap:SYS_PTRACE
+ptrace	ALLOW	kernel>=4.8
+# Unimplemented in Linux: always ENOSYS
+#putpmsg	ERRNO(ENOSYS)
+pwrite64	ALLOW
+pwritev	ALLOW
+pwritev2	ALLOW
+query_module	ALLOW	cap:SYS_MODULE
+query_module	ERRNO(EPERM)	!cap:SYS_MODULE
+quotactl	ALLOW	cap:SYS_ADMIN
+quotactl	ERRNO(EPERM)	!cap:SYS_ADMIN
+quotactl_fd	ALLOW	cap:SYS_ADMIN
+quotactl_fd	ERRNO(EPERM)	!cap:SYS_ADMIN
+read	ALLOW
+readahead	ALLOW
+# Legacy, like oldstat; libc uses getdents
+#readdir	ERRNO(EPERM)
+readlink	ALLOW
+readlinkat	ALLOW
+readv	ALLOW
+# Docker is more strict here
+reboot	ALLOW	cap:SYS_BOOT
+recv	ALLOW
+recvfrom	ALLOW
+recvmmsg	ALLOW
+recvmmsg_time64	ALLOW
+recvmsg	ALLOW
+remap_file_pages	ALLOW
+removexattr	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/4d30d2d2b7dbbca6baaf00cf2e826c6caab0f88b
+removexattrat	ALLOW
+rename	ALLOW
+renameat	ALLOW
+renameat2	ALLOW
+# Same behaviour as keyctl
+request_key	ERRNO(EPERM)
+restart_syscall	ALLOW
+riscv_flush_icache	ALLOW	arch:riscv64
+# Gated by arch in Podman
+riscv_hwprobe	ALLOW	arch:riscv64
+rmdir	ALLOW
+rseq	ALLOW
+# Missing in Docker and Podman. Like sched_yield
+#rseq_slice_yield	ALLOW
+rt_sigaction	ALLOW
+rt_sigpending	ALLOW
+rt_sigprocmask	ALLOW
+rt_sigqueueinfo	ALLOW
+rt_sigreturn	ALLOW
+rt_sigsuspend	ALLOW
+rt_sigtimedwait	ALLOW
+rt_sigtimedwait_time64	ALLOW
+rt_tgsigqueueinfo	ALLOW
+# PowerPC specific
+#rtas	ALLOW	cap:SYS_ADMIN && arch:ppc,ppc64
+# Like s390_runtime_instr
+#s390_guarded_storage	ALLOW	arch:s390,s390x
+s390_pci_mmio_read	ALLOW	arch:s390,s390x
+s390_pci_mmio_write	ALLOW	arch:s390,s390x
+s390_runtime_instr	ALLOW	arch:s390,s390x
+# Like s390_runtime_instr; read-only hypervisor information
+#s390_sthyi	ALLOW	arch:s390,s390x
+sched_get_priority_max	ALLOW
+sched_get_priority_min	ALLOW
+sched_getaffinity	ALLOW
+sched_getattr	ALLOW
+sched_getparam	ALLOW
+sched_getscheduler	ALLOW
+sched_rr_get_interval	ALLOW
+sched_rr_get_interval_time64	ALLOW
+sched_setaffinity	ALLOW
+sched_setattr	ALLOW
+sched_setparam	ALLOW
+sched_setscheduler	ALLOW
+sched_yield	ALLOW
+seccomp	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#security	ERRNO(ENOSYS)
+select	ALLOW
+semctl	ALLOW
+semget	ALLOW
+semop	ALLOW
+semtimedop	ALLOW
+semtimedop_time64	ALLOW
+send	ALLOW
+sendfile	ALLOW
+sendfile64	ALLOW
+sendmmsg	ALLOW
+sendmsg	ALLOW
+sendto	ALLOW
+# Docker is more strict here
+set_mempolicy	ALLOW	cap:SYS_NICE
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/0d19b83f79c7bf5d47716fa575cd7c2ce550edf0
+set_mempolicy_home_node	ALLOW	cap:SYS_NICE
+set_robust_list	ALLOW
+set_thread_area	ALLOW
+set_tid_address	ALLOW
+set_tls	ALLOW	arch:arm,arm64
+setdomainname	ALLOW	cap:SYS_ADMIN
+setdomainname	ERRNO(EPERM)	!cap:SYS_ADMIN
+setfsgid	ALLOW
+setfsgid32	ALLOW
+setfsuid	ALLOW
+setfsuid32	ALLOW
+setgid	ALLOW
+setgid32	ALLOW
+setgroups	ALLOW
+setgroups32	ALLOW
+sethostname	ALLOW	cap:SYS_ADMIN
+sethostname	ERRNO(EPERM)	!cap:SYS_ADMIN
+setitimer	ALLOW
+# Docker is more strict here. See https://github.com/podman-container-tools/container-libs/issues/62
+setns	ALLOW	cap:SYS_ADMIN
+setns	ERRNO(EPERM)	!cap:SYS_ADMIN
+setpgid	ALLOW
+setpriority	ALLOW
+setregid	ALLOW
+setregid32	ALLOW
+setresgid	ALLOW
+setresgid32	ALLOW
+setresuid	ALLOW
+setresuid32	ALLOW
+setreuid	ALLOW
+setreuid32	ALLOW
+setrlimit	ALLOW
+setsid	ALLOW
+setsockopt	ALLOW
+settimeofday	ALLOW	cap:SYS_TIME
+settimeofday	ERRNO(EPERM)	!cap:SYS_TIME
+setuid	ALLOW
+setuid32	ALLOW
+setxattr	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/c75c367dcdf9d48dd8a0d1f62d020456e00a4f00
+setxattrat	ALLOW
+sgetmask	ERRNO(EPERM)
+shmat	ALLOW
+shmctl	ALLOW
+shmdt	ALLOW
+shmget	ALLOW
+shutdown	ALLOW
+# Legacy non-RT signal syscall, like signal and sigprocmask
+#sigaction	ALLOW
+sigaltstack	ALLOW
+# Missing in Docker
+signal	ALLOW
+signalfd	ALLOW
+signalfd4	ALLOW
+# Legacy non-RT signal syscall, like signal and sigprocmask
+#sigpending	ALLOW
+sigprocmask	ALLOW
+sigreturn	ALLOW
+# Legacy non-RT signal syscall, like signal and sigprocmask
+#sigsuspend	ALLOW
+# Docker is more strict here
+socket	ALLOW	arg0<3
+socket	ALLOW	arg0==AF_ASH
+socket	ALLOW	arg0==AF_ATMPVC
+socket	ALLOW	arg0==AF_BLUETOOTH
+socket	ALLOW	arg0==AF_BRIDGE
+#socket	ALLOW	arg0==AF_CAN
+socket	ALLOW	arg0==AF_IB
+socket	ALLOW	arg0==AF_IEEE802154
+socket	ALLOW	arg0==AF_INET6
+socket	ALLOW	arg0==AF_IUCV
+socket	ALLOW	arg0==AF_KCM
+#socket	ALLOW	arg0==AF_KEY
+socket	ALLOW	arg0==AF_LLC
+socket	ALLOW	arg0==AF_MCTP
+#socket	ALLOW	arg0==AF_MPLS
+socket	ALLOW	arg0==AF_NETBEUI
+socket	ALLOW	arg0==AF_NETLINK && arg2!=NETLINK_AUDIT && !cap:AUDIT_WRITE
+socket	ALLOW	arg0==AF_NETLINK && cap:AUDIT_WRITE
+#socket	ALLOW	arg0==AF_NFC
+socket	ALLOW	arg0==AF_PACKET
+#socket	ALLOW	arg0==AF_PHONET
+#socket	ALLOW	arg0==AF_PPPOX
+#socket	ALLOW	arg0==AF_QIPCRTR
+#socket	ALLOW	arg0==AF_RDS
+#socket	ALLOW	arg0==AF_RXRPC
+socket	ALLOW	arg0==AF_SECURITY
+socket	ALLOW	arg0==AF_SMC
+socket	ALLOW	arg0==AF_SNA
+#socket	ALLOW	arg0==AF_TIPC
+#socket	ALLOW	arg0==AF_X25
+socket	ALLOW	arg0==AF_XDP
+socket	ERRNO(EINVAL)	arg0==AF_NETLINK && arg2==NETLINK_AUDIT && !cap:AUDIT_WRITE
+socketcall	ALLOW
+# The kernel blocks any family not AF_UNIX or AF_TIPC but after loading their modules.
+socketpair	ALLOW	arg0==AF_LOCAL
+#socketpair	ALLOW	arg0==AF_TIPC
+splice	ALLOW
+# PowerPC specific
+#spu_create	ERRNO(ENOSYS)
+# PowerPC specific
+#spu_run	ERRNO(ENOSYS)
+ssetmask	ERRNO(EPERM)
+stat	ALLOW
+stat64	ALLOW
+statfs	ALLOW
+statfs64	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/4d30d2d2b7dbbca6baaf00cf2e826c6caab0f88b
+statmount	ALLOW
+statx	ALLOW
+stime	ALLOW	cap:SYS_TIME
+stime	ERRNO(EPERM)	!cap:SYS_TIME
+# Unimplemented in Linux: always ENOSYS
+#stty	ERRNO(ENOSYS)
+# PowerPC specific
+#subpage_prot	ERRNO(EPERM)
+swapcontext	ALLOW	arch:ppc64le
+swapoff	ERRNO(EPERM)
+swapon	ERRNO(EPERM)
+# PowerPC specific
+#switch_endian	ERRNO(EPERM)
+symlink	ALLOW
+symlinkat	ALLOW
+sync	ALLOW
+sync_file_range	ALLOW
+sync_file_range2	ALLOW	arch:arm,arm64
+sync_file_range2	ALLOW	arch:ppc64le
+syncfs	ALLOW
+# PowerPC specific
+#sys_debug_setcontext	ERRNO(EPERM)
+syscall	ERRNO(EPERM)
+sysfs	ERRNO(EPERM)
+sysinfo	ALLOW
+# Docker is more strict here
+syslog	ALLOW	cap:SYSLOG
+syslog	ALLOW	cap:SYS_ADMIN
+# MIPS specific multiplexer
+#sysmips	ALLOW	arch:mips,mips64,mips64n32
+tee	ALLOW
+tgkill	ALLOW
+time	ALLOW
+timer_create	ALLOW
+timer_delete	ALLOW
+timer_getoverrun	ALLOW
+timer_gettime	ALLOW
+timer_gettime64	ALLOW
+timer_settime	ALLOW
+timer_settime64	ALLOW
+# Removed from Linux (2.6.23) and timerfd_create replaced it
+#timerfd	ERRNO(ENOSYS)
+timerfd_create	ALLOW
+timerfd_gettime	ALLOW
+timerfd_gettime64	ALLOW
+timerfd_settime	ALLOW
+timerfd_settime64	ALLOW
+times	ALLOW
+tkill	ALLOW
+truncate	ALLOW
+truncate64	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#tuxcall	ERRNO(ENOSYS)
+ugetrlimit	ALLOW
+# Unimplemented in Linux: always ENOSYS
+#ulimit	ERRNO(ENOSYS)
+umask	ALLOW
+# Docker is more strict here
+umount	ALLOW	cap:SYS_ADMIN
+# Docker is more strict here
+umount2	ALLOW	cap:SYS_ADMIN
+uname	ALLOW
+unlink	ALLOW
+unlinkat	ALLOW
+# Docker is more strict here
+unshare	ALLOW	cap:SYS_ADMIN
+# Missing in Docker and Podman. Like uretprobe?
+#uprobe	ALLOW
+# Missing in Podman, allowed in Docker https://github.com/moby/profiles/commit/4d30d2d2b7dbbca6baaf00cf2e826c6caab0f88b
+uretprobe	ALLOW
+uselib	ERRNO(EPERM)
+userfaultfd	ERRNO(EPERM)
+# Obsolete ARM 26-bit mode
+#usr26	ERRNO(ENOSYS)
+# Obsolete ARM 26-bit mode
+#usr32	ERRNO(ENOSYS)
+ustat	ERRNO(EPERM)
+utime	ALLOW
+utimensat	ALLOW
+utimensat_time64	ALLOW
+utimes	ALLOW
+vfork	ALLOW
+vhangup	ALLOW	cap:SYS_TTY_CONFIG
+vhangup	ERRNO(EPERM)	!cap:SYS_TTY_CONFIG
+vm86	ERRNO(EPERM)
+vm86old	ERRNO(EPERM)
+# Dropped in https://github.com/containers/common/commit/7ced5daafa0e36102eb931050ba3ff99f42bdfac
+vmsplice	ERRNO(EPERM)
+# Unimplemented in Linux: always ENOSYS
+#vserver	ERRNO(ENOSYS)
+wait4	ALLOW
+waitid	ALLOW
+waitpid	ALLOW
+write	ALLOW
+writev	ALLOW
