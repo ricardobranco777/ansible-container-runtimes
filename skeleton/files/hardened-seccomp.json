@@ -523,7 +523,6 @@
 		{
 			"names": [
 				"bpf",
-				"clone",
 				"clone3",
 				"fanotify_init",
 				"fsconfig",
@@ -538,13 +537,11 @@
 				"mount_setattr",
 				"move_mount",
 				"open_tree",
-				"perf_event_open",
 				"quotactl",
 				"quotactl_fd",
 				"setdomainname",
 				"sethostname",
 				"setns",
-				"syslog",
 				"umount",
 				"umount2",
 				"unshare"
@@ -662,6 +659,17 @@
 				]
 			},
 			"excludes": {
+				"caps": [
+					"CAP_SYS_ADMIN"
+				]
+			}
+		},
+		{
+			"names": [
+				"clone"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"includes": {
 				"caps": [
 					"CAP_SYS_ADMIN"
 				]
@@ -833,6 +841,17 @@
 			"names": [
 				"perf_event_open"
 			],
+			"action": "SCMP_ACT_ALLOW",
+			"includes": {
+				"caps": [
+					"CAP_SYS_ADMIN"
+				]
+			}
+		},
+		{
+			"names": [
+				"perf_event_open"
+			],
 			"action": "SCMP_ACT_ERRNO",
 			"errnoRet": 1,
 			"excludes": {
@@ -870,8 +889,7 @@
 		},
 		{
 			"names": [
-				"personality",
-				"socket"
+				"personality"
 			],
 			"action": "SCMP_ACT_ALLOW",
 			"args": [
@@ -960,6 +978,32 @@
 			"names": [
 				"socket"
 			],
+			"action": "SCMP_ACT_ERRNO",
+			"errnoRet": 22,
+			"args": [
+				{
+					"index": 0,
+					"value": 4294967295,
+					"valueTwo": 16,
+					"op": "SCMP_CMP_MASKED_EQ"
+				},
+				{
+					"index": 2,
+					"value": 4294967295,
+					"valueTwo": 9,
+					"op": "SCMP_CMP_MASKED_EQ"
+				}
+			],
+			"excludes": {
+				"caps": [
+					"CAP_AUDIT_WRITE"
+				]
+			}
+		},
+		{
+			"names": [
+				"socket"
+			],
 			"action": "SCMP_ACT_ALLOW",
 			"args": [
 				{
@@ -978,6 +1022,19 @@
 				{
 					"index": 0,
 					"value": 18,
+					"op": "SCMP_CMP_EQ"
+				}
+			]
+		},
+		{
+			"names": [
+				"socket"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [
+				{
+					"index": 0,
+					"value": 8,
 					"op": "SCMP_CMP_EQ"
 				}
 			]
@@ -1220,30 +1277,6 @@
 		},
 		{
 			"names": [
-				"socket"
-			],
-			"action": "SCMP_ACT_ERRNO",
-			"errnoRet": 22,
-			"args": [
-				{
-					"index": 0,
-					"value": 16,
-					"op": "SCMP_CMP_EQ"
-				},
-				{
-					"index": 2,
-					"value": 9,
-					"op": "SCMP_CMP_EQ"
-				}
-			],
-			"excludes": {
-				"caps": [
-					"CAP_AUDIT_WRITE"
-				]
-			}
-		},
-		{
-			"names": [
 				"socketpair"
 			],
 			"action": "SCMP_ACT_ALLOW",
@@ -1275,6 +1308,17 @@
 			"includes": {
 				"caps": [
 					"CAP_SYSLOG"
+				]
+			}
+		},
+		{
+			"names": [
+				"syslog"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"includes": {
+				"caps": [
+					"CAP_SYS_ADMIN"
 				]
 			}
 		},

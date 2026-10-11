@@ -532,6 +532,10 @@ sigprocmask	ALLOW
 sigreturn	ALLOW
 # Legacy non-RT signal syscall, like signal and sigprocmask
 #sigsuspend	ALLOW
+# The kernel reads the int arguments of socket from the low 32 bits, but seccomp compares 64.
+# Mask the deny so socket(AF_NETLINK, x, 0x100000009) can't skip it, and keep it before the
+# allows below: it overlaps socket 16 3 0x100000009 with them, and the order decides.
+socket	ERRNO(EINVAL)	arg0&0xffffffff==AF_NETLINK && arg2&0xffffffff==NETLINK_AUDIT && !cap:AUDIT_WRITE
 # Docker is more strict here
 socket	ALLOW	arg0<3
 socket	ALLOW	arg0==AF_ASH
@@ -564,7 +568,6 @@ socket	ALLOW	arg0==AF_SNA
 #socket	ALLOW	arg0==AF_TIPC
 #socket	ALLOW	arg0==AF_X25
 socket	ALLOW	arg0==AF_XDP
-socket	ERRNO(EINVAL)	arg0==AF_NETLINK && arg2==NETLINK_AUDIT && !cap:AUDIT_WRITE
 socketcall	ALLOW
 # The kernel blocks any family not AF_UNIX or AF_TIPC but after loading their modules.
 socketpair	ALLOW	arg0==AF_LOCAL
