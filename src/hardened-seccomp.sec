@@ -1,5 +1,5 @@
 @default	ERRNO(ENOSYS)
-# Uncomment to allow x32 binaries
+# Uncomment to allow x32 and 32-bit x86 binaries
 #@arch	x86_64	x32,x86
 @arch	x86_64
 @arch	aarch64	arm
@@ -536,7 +536,7 @@ sigreturn	ALLOW
 # Mask the deny so socket(AF_NETLINK, x, 0x100000009) can't skip it, and keep it before the
 # allows below: it overlaps socket 16 3 0x100000009 with them, and the order decides.
 socket	ERRNO(EINVAL)	arg0&0xffffffff==AF_NETLINK && arg2&0xffffffff==NETLINK_AUDIT && !cap:AUDIT_WRITE
-# Docker is more strict here
+# Docker's allowlist minus the families commented out below
 socket	ALLOW	arg0<3
 socket	ALLOW	arg0==AF_ASH
 socket	ALLOW	arg0==AF_ATMPVC
